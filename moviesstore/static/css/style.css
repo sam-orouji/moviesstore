@@ -1,0 +1,89 @@
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.bg-index{
+  background: url("/static/img/background.jpg") no-repeat
+    fixed;
+  background-size: 100% auto;
+}
+
+.navbar a.nav-link {
+  color: #FFFEF6 !important;
+}
+.bg-dark {
+  background-color: #2E2E2E !important;
+}
+
+.ms-footer {
+  background-color: #202020;
+}
+.ms-footer p {
+  color: #7F7F7F;
+  font-size: 13px;
+}
+.ms-footer a:hover {
+  color: #6ab43e;
+  text-decoration: none;
+}
+.ms-footer-bottom span{
+  font-size: 13px;
+  line-height: 38px;
+}
+.ms-footer-bottom a {
+  color: #6ab43e;
+  text-decoration: none;
+}
+.ms-footer-bottom a:hover {
+  color: #fff;
+}
+
+/* Keep poster proportions while fitting the available column width. */
+img.img-card-200,
+img.img-card-400 {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.img-card-200 {
+  max-height: 500px;
+}
+
+.img-card-400 {
+  max-height: 400px;
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 1rem 1.5rem;
+}
+
+/* Matching poster frames scale the artwork proportionally to fill each frame. */
+.movie-grid .img-card-200 {
+  width: 100%;
+  max-width: calc(500px * 2 / 3);
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+}
+
+.movie-grid .card-body {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .movie-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 992px) {
+  .movie-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

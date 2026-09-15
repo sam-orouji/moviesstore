@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body_class %}home-page{% endblock body_class %}
+{% block content_class %}home-content{% endblock content_class %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}?v=1">
+{% endblock extra_css %}
+{% block content %}
+<header class="home-hero text-white text-center">
+  <div class="container">
+    <p class="home-eyebrow">Start your movie night</p>
+    <h1>Movies Store</h1>
+    <p class="home-tagline">Your Ticket to Unlimited Entertainment!</p>
+    <p class="home-hero-description">
+      From old favorites to your next favorite, find a film for you.
+    </p>
+  </div>
+</header>
+
+<section class="home-discover" aria-labelledby="discover-title">
+  <div class="container">
+    <div class="home-discover-card">
+      <p class="home-eyebrow">A good story starts here</p>
+      <h2 id="discover-title">Find your next favorite.</h2>
+      <p class="home-card-description">
+        Browse the collection, explore movie details and reviews, and add your
+        picks to the cart. Have a title in mind or just looking around? Start
+        with the movies and see what catches your eye.
+      </p>
+      <nav class="home-actions" aria-label="Explore Movies Store">
+        <a class="btn home-button-primary" href="{% url 'movies.index' %}">Browse movies</a>
+        <a class="btn home-button-secondary" href="{% url 'home.about' %}">About the store</a>
+      </nav>
+    </div>
+  </div>
+</section>
+{% endblock content %}

@@ -1,99 +1,86 @@
 {% extends 'base.html' %}
+{% load tz %}
 {% block content %}
-{% load static %}
-<div class="p-3">
+<div class="p-3 movie-detail">
   <div class="container">
-    <div class="row mt-3">
-      <div class="col-md-6 mx-auto mb-3">
-        <h2>{{ template_data.movie.name }}</h2>
-        <hr />
-        <p><b>Description:</b> {{ template_data.movie.description }}</p>
-        <p><b>Price:</b> ${{ template_data.movie.price }}</p>
-        <p class="card-text">
-          <form method="post" action="{% url 'cart.add' id=template_data.movie.id %}">
-            <div class="row">
-              {% csrf_token %}
-              <div class="col-auto">
-                <div class="input-group col-auto">
-                  <div class="input-group-text">Quantity</div>
-                  <input type="number" min="1" max="10" class="form-control quantity-input" name="quantity" value="1">
-                </div>
-              </div>
-              <div class="col-auto">
-                <button class="btn bg-dark text-white" type="submit">Add to cart</button>
-              </div>
-            </div>
-          </form>
-        </p>
-
-        <h2>Reviews</h2>
-        <hr />
-        <ul class="list-group">
-
-          {% for review in template_data.reviews %}
-          <li class="list-group-item pb-3 pt-3">
-            <h5 class="card-title">
-              Review by {{ review.user.username }}
-            </h5>
-            <h6 class="card-subtitle mb-2 text-muted">
-              {{ review.date }}
-            </h6>
-            <p class="card-text">{{ review.comment }}</p>
-            {% if user.is_authenticated and user == review.user %}
-            <a class="btn btn-primary"
-              href="{% url 'movies.edit_review' id=template_data.movie.id review_id=review.id %}">
-              Edit
-            </a>
-            <a class="btn btn-danger"
-              href="{% url 'movies.delete_review' id=template_data.movie.id review_id=review.id %}">
-              Delete
-            </a>
-
-            <form method="POST"
-                  action="{% url 'movies.report_review' id=template_data.movie.id review_id=review.id %}">
-              {% csrf_token %}
-              <button type="submit"
-                      class="btn btn-outline-danger btn-sm">
-                    Report inappropriate review
-              </button>
-            </form>
-            {% endif %}
-
-          </li>
-          {% endfor %}
-        </ul>
-
-
-
-        <div class="container mt-4">
-          <div class="row justify-content-center">
-            <div class="col-12">
-              <div class="card shadow p-3 mb-4 rounded">
-                <div class="card-body">
-                  <b class="text-start">Create a review</b><br /><br />
-                  <form method="POST" action="{% url 'movies.create_review' id=template_data.movie.id %}">
-                    {% csrf_token %}
-                    <p>
-                      <label for="comment">Comment:</label>
-                      <textarea name="comment" required class="form-control" id="comment"></textarea>
-                    </p>
-
-                    <div class="text-center">
-                      <button type="submit" class="btn bg-dark text-white">
-                        Add Review
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
+    <section class="movie-overview mt-3" aria-labelledby="movie-title">
+      <h2 id="movie-title">{{ template_data.movie.name }}</h2>
+      <hr />
+      <p><b>Description:</b> {{ template_data.movie.description }}</p>
+      <p><b>Price:</b> ${{ template_data.movie.price }}</p>
+      <form method="post" action="{% url 'cart.add' id=template_data.movie.id %}">
+        {% csrf_token %}
+        <div class="movie-purchase-actions">
+          <div class="input-group movie-quantity">
+            <label class="input-group-text" for="quantity">Quantity</label>
+            <input type="number" min="1" max="10" class="form-control quantity-input"
+                   id="quantity" name="quantity" value="1">
           </div>
+          <button class="btn bg-dark text-white" type="submit">Add to cart</button>
         </div>
+      </form>
+    </section>
+
+    <section aria-labelledby="reviews-title" class="mb-4">
+      <h2 id="reviews-title" class="mb-3">Reviews</h2>
+      <div class="movie-review-layout">
+        <div class="movie-review-column">
+          <ul class="review-list">
+            {% for review in template_data.reviews %}
+            <li class="card review-panel">
+              <h3 class="review-author">Review by {{ review.user.username }}</h3>
+              <p class="review-date text-muted">{{ review.date|timezone:"America/New_York"|date:"M j, Y, g:i A T" }}</p>
+              <p class="review-comment">{{ review.comment }}</p>
+              {% if user.is_authenticated %}
+              <div class="review-actions">
+                {% if user == review.user %}
+                <a class="btn btn-primary"
+                   href="{% url 'movies.edit_review' id=template_data.movie.id review_id=review.id %}">
+                  Edit
+                </a>
+                <a class="btn btn-danger"
+                   href="{% url 'movies.delete_review' id=template_data.movie.id review_id=review.id %}">
+                  Delete
+                </a>
+                {% endif %}
+                <form method="POST" class="review-report"
+                      action="{% url 'movies.report_review' id=template_data.movie.id review_id=review.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-report"
+                          aria-label="Report inappropriate review by {{ review.user.username }}">
+                    <i class="far fa-flag" aria-hidden="true"></i>
+                    Report review
+                  </button>
+                </form>
+              </div>
+              {% endif %}
+            </li>
+            {% empty %}
+            <li class="card review-panel">
+              <p class="mb-0 text-muted">No reviews yet. Be the first to share your thoughts.</p>
+            </li>
+            {% endfor %}
+          </ul>
+
+          <section class="card review-panel review-composer" aria-labelledby="create-review-title">
+            <h3 id="create-review-title" class="h5 mb-3">Create a review</h3>
+            <form method="POST" action="{% url 'movies.create_review' id=template_data.movie.id %}">
+              {% csrf_token %}
+              <div class="mb-3">
+                <label for="comment" class="form-label">Comment</label>
+                <textarea name="comment" required class="form-control" id="comment" rows="4"></textarea>
+              </div>
+              <button type="submit" class="btn bg-dark text-white">Add Review</button>
+            </form>
+          </section>
+        </div>
+
+        <figure class="movie-poster">
+          <img src="{{ template_data.movie.image.url }}" class="rounded img-card-400"
+               alt="{{ template_data.movie.name }} poster" />
+        </figure>
       </div>
-      <div class="col-md-6 mx-auto mb-3 text-center">
-        <img src="{{ template_data.movie.image.url }}" class="rounded img-card-400" />
-      </div>
-    </div>
+    </section>
   </div>
 </div>
 {% endblock content %}
